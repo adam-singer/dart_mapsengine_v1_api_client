@@ -1064,7 +1064,15 @@ class TablesFeaturesResource_ {
   }
 
   /**
-   * Append the supplied features.
+   * Append features to an existing table.
+
+A single batchInsert request can create:
+
+- Up to 50 features.
+- A combined total of 10 000 vertices.
+Feature limits are documented in the Supported data formats and limits article of the Google Maps Engine help center. Note that free and paid accounts have different limits.
+
+For more information about inserting features, read Creating features in the Google Maps Engine developer's guide.
    *
    * [request] - FeaturesBatchInsertRequest to send in this request
    *
@@ -1098,7 +1106,21 @@ class TablesFeaturesResource_ {
   }
 
   /**
-   * Patch the supplied features.
+   * Update the supplied features.
+
+A single batchPatch request can update:
+
+- Up to 50 features.
+- A combined total of 10 000 vertices.
+Feature limits are documented in the Supported data formats and limits article of the Google Maps Engine help center. Note that free and paid accounts have different limits.
+
+Feature updates use HTTP PATCH semantics:
+
+- A supplied value replaces an existing value (if any) in that field.
+- Omitted fields remain unchanged.
+- Complex values in geometries and properties must be replaced as atomic units. For example, providing just the coordinates of a geometry is not allowed; the complete geometry, including type, must be supplied.
+- Setting a property's value to null deletes that property.
+For more information about updating features, read Updating features in the Google Maps Engine developer's guide.
    *
    * [request] - FeaturesBatchPatchRequest to send in this request
    *

@@ -346,10 +346,26 @@ class File {
 }
 
 /** A geometry object */
-class GeoJsonGeometry {
+abstract class GeoJsonGeometry {
 
   /** Create new GeoJsonGeometry from JSON data */
-  GeoJsonGeometry.fromJson(core.Map json) {
+  factory GeoJsonGeometry.fromJson(core.Map json) {
+    switch(json["type"]) {
+      case "GeoJsonGeometryCollection":
+        return new GeoJsonGeometryCollection.fromJson(json);
+      case "GeoJsonLineString":
+        return new GeoJsonLineString.fromJson(json);
+      case "GeoJsonMultiLineString":
+        return new GeoJsonMultiLineString.fromJson(json);
+      case "GeoJsonMultiPoint":
+        return new GeoJsonMultiPoint.fromJson(json);
+      case "GeoJsonMultiPolygon":
+        return new GeoJsonMultiPolygon.fromJson(json);
+      case "GeoJsonPoint":
+        return new GeoJsonPoint.fromJson(json);
+      case "GeoJsonPolygon":
+        return new GeoJsonPolygon.fromJson(json);
+    }
   }
 
   /** Create JSON Object for GeoJsonGeometry */
@@ -366,7 +382,7 @@ class GeoJsonGeometry {
 }
 
 /** Geometry Collection */
-class GeoJsonGeometryCollection {
+class GeoJsonGeometryCollection implements GeoJsonGeometry {
 
   /** The geometry objects that are contained within this geometry collection. */
   core.List<GeoJsonGeometry> geometries;
@@ -404,7 +420,7 @@ class GeoJsonGeometryCollection {
 }
 
 /** Line String */
-class GeoJsonLineString {
+class GeoJsonLineString implements GeoJsonGeometry {
 
   /** The coordinates of this line string as an array of two or more positions. */
   LineString coordinates;
@@ -442,7 +458,7 @@ class GeoJsonLineString {
 }
 
 /** Multi Line String */
-class GeoJsonMultiLineString {
+class GeoJsonMultiLineString implements GeoJsonGeometry {
 
   /** The coordinates of this multi-line string as an array of line string coordinate arrays. */
   core.List<LineString> coordinates;
@@ -479,7 +495,7 @@ class GeoJsonMultiLineString {
 
 }
 
-class GeoJsonMultiPoint {
+class GeoJsonMultiPoint implements GeoJsonGeometry {
 
   /** The coordinates of this multi-point as an array of positions. */
   core.List<Point> coordinates;
@@ -517,7 +533,7 @@ class GeoJsonMultiPoint {
 }
 
 /** Multi Polygon */
-class GeoJsonMultiPolygon {
+class GeoJsonMultiPolygon implements GeoJsonGeometry {
 
   /** The coordinates of this multi-polygon as an array of polygon coordinate arrays. */
   core.List<Polygon> coordinates;
@@ -554,7 +570,7 @@ class GeoJsonMultiPolygon {
 
 }
 
-class GeoJsonPoint {
+class GeoJsonPoint implements GeoJsonGeometry {
 
   /** The coordinates of this point as a position in [longitude, latitude] or [longitude, latitude, altitude] form. */
   Point coordinates;
@@ -592,7 +608,7 @@ class GeoJsonPoint {
 }
 
 /** Polygon */
-class GeoJsonPolygon {
+class GeoJsonPolygon implements GeoJsonGeometry {
 
   /** The coordinates of this polygon as an array of linear ring coordinate arrays. A linear ring is a closed line string with 4 or more positions. The first and last positions are equivalent. For polygons with multiple rings, the first must be the exterior ring and any others must be interior rings or holes. */
   Polygon coordinates;
@@ -806,6 +822,26 @@ class Image {
   }
 
   /** Return String representation of Image */
+  core.String toString() => JSON.encode(this.toJson());
+
+}
+
+/** A rectangular geographic bounds. */
+class LatLngBox {
+
+  /** Create new LatLngBox from JSON data */
+  LatLngBox.fromJson(core.Map json) {
+  }
+
+  /** Create JSON Object for LatLngBox */
+  core.Map toJson() {
+    var output = new core.Map();
+
+
+    return output;
+  }
+
+  /** Return String representation of LatLngBox */
   core.String toString() => JSON.encode(this.toJson());
 
 }
@@ -1097,10 +1133,13 @@ class Map {
 
 }
 
-class MapFolder {
+class MapFolder implements MapItem {
 
   /** The contents of this Folder. */
   core.List<MapItem> contents;
+
+  /** An array of four numbers (west, south, east, north) which defines the rectangular bounding box of the default viewport. The numbers represent latitude and longitude in decimal degrees. */
+  LatLngBox defaultViewport;
 
   /** A user defined alias for this Folder, specific to this Map. */
   core.String key;
@@ -1118,6 +1157,9 @@ class MapFolder {
   MapFolder.fromJson(core.Map json) {
     if (json.containsKey("contents")) {
       contents = json["contents"].map((contentsItem) => new MapItem.fromJson(contentsItem)).toList();
+    }
+    if (json.containsKey("defaultViewport")) {
+      defaultViewport = new LatLngBox.fromJson(json["defaultViewport"]);
     }
     if (json.containsKey("key")) {
       key = json["key"];
@@ -1139,6 +1181,9 @@ class MapFolder {
 
     if (contents != null) {
       output["contents"] = contents.map((contentsItem) => contentsItem.toJson()).toList();
+    }
+    if (defaultViewport != null) {
+      output["defaultViewport"] = defaultViewport.toJson();
     }
     if (key != null) {
       output["key"] = key;
@@ -1162,10 +1207,18 @@ class MapFolder {
 }
 
 /** A map item. */
-class MapItem {
+abstract class MapItem {
 
   /** Create new MapItem from JSON data */
-  MapItem.fromJson(core.Map json) {
+  factory MapItem.fromJson(core.Map json) {
+    switch(json["type"]) {
+      case "MapFolder":
+        return new MapFolder.fromJson(json);
+      case "MapKmlLink":
+        return new MapKmlLink.fromJson(json);
+      case "MapLayer":
+        return new MapLayer.fromJson(json);
+    }
   }
 
   /** Create JSON Object for MapItem */
@@ -1181,7 +1234,10 @@ class MapItem {
 
 }
 
-class MapKmlLink {
+class MapKmlLink implements MapItem {
+
+  /** An array of four numbers (west, south, east, north) which defines the rectangular bounding box of the default viewport. The numbers represent latitude and longitude in decimal degrees. */
+  LatLngBox defaultViewport;
 
   /** The URL to the KML file represented by this KmlLink. */
   core.String kmlUrl;
@@ -1197,6 +1253,9 @@ class MapKmlLink {
 
   /** Create new MapKmlLink from JSON data */
   MapKmlLink.fromJson(core.Map json) {
+    if (json.containsKey("defaultViewport")) {
+      defaultViewport = new LatLngBox.fromJson(json["defaultViewport"]);
+    }
     if (json.containsKey("kmlUrl")) {
       kmlUrl = json["kmlUrl"];
     }
@@ -1215,6 +1274,9 @@ class MapKmlLink {
   core.Map toJson() {
     var output = new core.Map();
 
+    if (defaultViewport != null) {
+      output["defaultViewport"] = defaultViewport.toJson();
+    }
     if (kmlUrl != null) {
       output["kmlUrl"] = kmlUrl;
     }
@@ -1236,7 +1298,10 @@ class MapKmlLink {
 
 }
 
-class MapLayer {
+class MapLayer implements MapItem {
+
+  /** An array of four numbers (west, south, east, north) which defines the rectangular bounding box of the default viewport. The numbers represent latitude and longitude in decimal degrees. */
+  LatLngBox defaultViewport;
 
   /** The ID of this Layer. This ID can be used to request more details about this Layer. */
   core.String id;
@@ -1255,6 +1320,9 @@ class MapLayer {
 
   /** Create new MapLayer from JSON data */
   MapLayer.fromJson(core.Map json) {
+    if (json.containsKey("defaultViewport")) {
+      defaultViewport = new LatLngBox.fromJson(json["defaultViewport"]);
+    }
     if (json.containsKey("id")) {
       id = json["id"];
     }
@@ -1276,6 +1344,9 @@ class MapLayer {
   core.Map toJson() {
     var output = new core.Map();
 
+    if (defaultViewport != null) {
+      output["defaultViewport"] = defaultViewport.toJson();
+    }
     if (id != null) {
       output["id"] = id;
     }
@@ -1799,37 +1870,39 @@ class RastersListResponse {
 
 }
 
-/** An asset is an abstract representation of any first class object in Maps Engine. */
+/** An asset is any Google Maps Engine resource that has a globally unique ID. Assets include maps, layers, vector tables, raster collections, and rasters. Projects and features are not considered assets.
+
+More detailed information about an asset can be obtained by querying the asset's particular endpoint. */
 class Resource {
 
-  /** An array of four numbers (west, south, east, north) which define the rectangular bounding box which contains all of the data in this Asset. The numbers represent latitude and longitude in decimal degrees. */
+  /** An array of four numbers (west, south, east, north) which define the rectangular bounding box which contains all of the data in this asset. The numbers represent latitude and longitude in decimal degrees. */
   BboxBounds bbox;
 
-  /** The creation time of this asset. The value is an RFC 3339 formatted date-time value (e.g. 1970-01-01T00:00:00Z). */
+  /** The creation time of this asset. The value is an <a href="http://www.ietf.org/rfc/rfc3339.txt"RFC 3339-formatted date-time value (for example, 1970-01-01T00:00:00Z). */
   core.String creationTime;
 
-  /** The description of this Asset, supplied by the author. */
+  /** The asset's description. */
   core.String description;
 
-  /** A globally unique ID, used to refer to this Asset. */
+  /** The asset's globally unique ID. */
   core.String id;
 
-  /** The last modified time of this asset. The value is an RFC 3339 formatted date-time value (e.g. 1970-01-01T00:00:00Z). */
+  /** The last modified time of this asset. The value is an <a href="http://www.ietf.org/rfc/rfc3339.txt"RFC 3339-formatted date-time value (for example, 1970-01-01T00:00:00Z). */
   core.String lastModifiedTime;
 
-  /** The name of this Asset, supplied by the author. */
+  /** The asset's name. */
   core.String name;
 
-  /** The ID of the project that this Asset is in. */
+  /** The ID of the project to which the asset belongs. */
   core.String projectId;
 
-  /** The path of the more specific version of this asset. */
+  /** The URL to query to retrieve the asset's complete object. The assets endpoint only returns high-level information about a resource. */
   core.String resource;
 
-  /** Tags of this Asset. */
+  /** An array of text strings, with each string representing a tag. More information about tags can be found in the Tagging data article of the Maps Engine help center. */
   core.List<core.String> tags;
 
-  /** The type of this Asset. One of "raster", "rasterCollection", "table", "map" or "layer". */
+  /** The type of asset. One of raster, rasterCollection, table, map, or layer. */
   core.String type;
 
   /** Create new Resource from JSON data */
@@ -1950,10 +2023,10 @@ class ResourcesListResponse {
 /** A schema indicating the properties which may be associated with features within a Table, and the types of those properties. */
 class Schema {
 
-  /** The columns of this Table. */
+  /** An array of column objects. The first object in the array must be named geometry and be of type points, lineStrings, polygons, or mixedGeometry. */
   core.List<SchemaColumns> columns;
 
-  /** The name of the column that ends up in the geometry field of a Feature. */
+  /** The name of the column that contains a feature's geometry. This field can be omitted during table create; Google Maps Engine supports only a single geometry column, which must be named geometry and be the first object in the columns array. */
   core.String primaryGeometry;
 
   /** The name of the column that contains the unique identifier of a Feature. */
@@ -1996,10 +2069,19 @@ class Schema {
 
 class SchemaColumns {
 
-  /** The name of this column. */
+  /** The column name. */
   core.String name;
 
-  /** The type of the data stored in this column. One of "integer", "double", "boolean", "string", "mixedGeometry", "points", "lineStrings" or "polygons". */
+  /** The type of data stored in this column. Accepted values are:
+ 
+- integer 
+- double 
+- boolean 
+- string 
+- mixedGeometry 
+- points 
+- lineStrings 
+- polygons */
   core.String type;
 
   /** Create new SchemaColumns from JSON data */
@@ -2058,7 +2140,13 @@ class Table {
   /** The name of this table, supplied by the author. */
   core.String name;
 
-  /** The processing status of this table. */
+  /** The processing status of this table. The supported processing status values are:
+ 
+- notReady: The table is not ready to be processed - some files have not been uploaded. 
+- ready: The table is queued for processing. 
+- processing: The table is currently processing. 
+- complete: Processing has completed successfully. 
+- failed: Processing failed to complete. */
   core.String processingStatus;
 
   /** The ID of the project to which the table belongs. */
