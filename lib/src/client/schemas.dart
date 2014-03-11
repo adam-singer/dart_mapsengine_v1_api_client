@@ -56,11 +56,8 @@ class BboxBounds extends SchemaArray<core.num> {
   }
 
   /** Create JSON Object for BboxBounds */
-  core.Map toJson() {
-    var output = new core.Map();
-
-
-    return output;
+  core.List toJson() {
+    return innerList;
   }
 
   /** Return String representation of BboxBounds */
@@ -370,12 +367,7 @@ abstract class GeoJsonGeometry {
   }
 
   /** Create JSON Object for GeoJsonGeometry */
-  core.Map toJson() {
-    var output = new core.Map();
-
-
-    return output;
-  }
+  core.Map toJson();
 
   /** Return String representation of GeoJsonGeometry */
   core.String toString() => JSON.encode(this.toJson());
@@ -836,11 +828,8 @@ class LatLngBox extends SchemaArray<core.num> {
   }
 
   /** Create JSON Object for LatLngBox */
-  core.Map toJson() {
-    var output = new core.Map();
-
-
-    return output;
+  core.List toJson() {
+    return innerList;
   }
 
   /** Return String representation of LatLngBox */
@@ -997,19 +986,16 @@ class LayersListResponse {
 }
 
 /** A coordinate array representing a line string. */
-class LineString extends SchemaArray {
+class LineString extends SchemaArray<Point> {
 
   /** Create new LineString from JSON data */
   LineString.fromJson(core.List json) {
-    innerList.addAll(json);
+    innerList.addAll(json.map((item) => new Point.fromJson(item)).toList());
   }
 
   /** Create JSON Object for LineString */
-  core.Map toJson() {
-    var output = new core.Map();
-
-
-    return output;
+  core.List toJson() {
+    return innerList.map((item) => item.toJson()).toList();
   }
 
   /** Return String representation of LineString */
@@ -1225,12 +1211,7 @@ abstract class MapItem {
   }
 
   /** Create JSON Object for MapItem */
-  core.Map toJson() {
-    var output = new core.Map();
-
-
-    return output;
-  }
+  core.Map toJson();
 
   /** Return String representation of MapItem */
   core.String toString() => JSON.encode(this.toJson());
@@ -1488,11 +1469,8 @@ class Point extends SchemaArray<core.num> {
   }
 
   /** Create JSON Object for Point */
-  core.Map toJson() {
-    var output = new core.Map();
-
-
-    return output;
+  core.List toJson() {
+    return innerList;
   }
 
   /** Return String representation of Point */
@@ -1501,19 +1479,16 @@ class Point extends SchemaArray<core.num> {
 }
 
 /** A coordinate array representing a polygon. */
-class Polygon extends SchemaArray {
+class Polygon extends SchemaArray<LineString> {
 
   /** Create new Polygon from JSON data */
   Polygon.fromJson(core.List json) {
-    innerList.addAll(json);
+    innerList.addAll(json.map((item) => new LineString.fromJson(item)).toList());
   }
 
   /** Create JSON Object for Polygon */
-  core.Map toJson() {
-    var output = new core.Map();
-
-
-    return output;
+  core.List toJson() {
+    return innerList.map((item) => item.toJson()).toList();
   }
 
   /** Return String representation of Polygon */
