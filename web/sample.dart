@@ -17,7 +17,20 @@ void main() {
       .then((FeaturesListResponse data) {
         container.appendHtml("${data.features.length} features loaded from table $id.<br>");
         data.features.forEach((Feature feature) {
-          container.appendHtml("${feature.toString()}<br>");
+          container.appendHtml("$feature<br>");
+          switch (feature.geometry.runtimeType.toString()) {
+            case "GeoJsonPoint":
+              GeoJsonPoint geometry = feature.geometry;
+              container.appendHtml("Point: ");
+              geometry.coordinates.forEach((x) => container.appendHtml(" $x"));
+              container.appendHtml("<br>");
+              break;
+            case "GeoJsonPolygon":
+              GeoJsonPolygon geometry = feature.geometry;
+              container.appendHtml("Polygon: ");
+              geometry.coordinates.forEach((x) => container.appendHtml(" $x"));
+              container.appendHtml("<br>");
+          }
         });
         container.appendHtml("<br>");
       })
