@@ -48,10 +48,11 @@ class AcquisitionTime {
 }
 
 /** A rectangular geographic bounds, expressed as [lower_left_x, lower_left_y, upper_right_x, upper_right_y]. */
-class BboxBounds {
+class BboxBounds extends SchemaArray<core.num> {
 
   /** Create new BboxBounds from JSON data */
-  BboxBounds.fromJson(core.Map json) {
+  BboxBounds.fromJson(core.List json) {
+    innerList.addAll(json);
   }
 
   /** Create JSON Object for BboxBounds */
@@ -351,19 +352,19 @@ abstract class GeoJsonGeometry {
   /** Create new GeoJsonGeometry from JSON data */
   factory GeoJsonGeometry.fromJson(core.Map json) {
     switch(json["type"]) {
-      case "GeoJsonGeometryCollection":
+      case "GeometryCollection":
         return new GeoJsonGeometryCollection.fromJson(json);
-      case "GeoJsonLineString":
+      case "LineString":
         return new GeoJsonLineString.fromJson(json);
-      case "GeoJsonMultiLineString":
+      case "MultiLineString":
         return new GeoJsonMultiLineString.fromJson(json);
-      case "GeoJsonMultiPoint":
+      case "MultiPoint":
         return new GeoJsonMultiPoint.fromJson(json);
-      case "GeoJsonMultiPolygon":
+      case "MultiPolygon":
         return new GeoJsonMultiPolygon.fromJson(json);
-      case "GeoJsonPoint":
+      case "Point":
         return new GeoJsonPoint.fromJson(json);
-      case "GeoJsonPolygon":
+      case "Polygon":
         return new GeoJsonPolygon.fromJson(json);
     }
   }
@@ -827,10 +828,11 @@ class Image {
 }
 
 /** A rectangular geographic bounds. */
-class LatLngBox {
+class LatLngBox extends SchemaArray<core.num> {
 
   /** Create new LatLngBox from JSON data */
-  LatLngBox.fromJson(core.Map json) {
+  LatLngBox.fromJson(core.List json) {
+    innerList.addAll(json);
   }
 
   /** Create JSON Object for LatLngBox */
@@ -995,10 +997,11 @@ class LayersListResponse {
 }
 
 /** A coordinate array representing a line string. */
-class LineString {
+class LineString extends SchemaArray {
 
   /** Create new LineString from JSON data */
-  LineString.fromJson(core.Map json) {
+  LineString.fromJson(core.List json) {
+    innerList.addAll(json);
   }
 
   /** Create JSON Object for LineString */
@@ -1212,11 +1215,11 @@ abstract class MapItem {
   /** Create new MapItem from JSON data */
   factory MapItem.fromJson(core.Map json) {
     switch(json["type"]) {
-      case "MapFolder":
+      case "folder":
         return new MapFolder.fromJson(json);
-      case "MapKmlLink":
+      case "kmlLink":
         return new MapKmlLink.fromJson(json);
-      case "MapLayer":
+      case "layer":
         return new MapLayer.fromJson(json);
     }
   }
@@ -1477,10 +1480,11 @@ class ParentsListResponse {
 }
 
 /** A coordinate array representing a point. */
-class Point {
+class Point extends SchemaArray<core.num> {
 
   /** Create new Point from JSON data */
-  Point.fromJson(core.Map json) {
+  Point.fromJson(core.List json) {
+    innerList.addAll(json);
   }
 
   /** Create JSON Object for Point */
@@ -1497,10 +1501,11 @@ class Point {
 }
 
 /** A coordinate array representing a polygon. */
-class Polygon {
+class Polygon extends SchemaArray {
 
   /** Create new Polygon from JSON data */
-  Polygon.fromJson(core.Map json) {
+  Polygon.fromJson(core.List json) {
+    innerList.addAll(json);
   }
 
   /** Create JSON Object for Polygon */
