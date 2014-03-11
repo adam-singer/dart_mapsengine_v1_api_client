@@ -639,18 +639,16 @@ class GeoJsonPolygon implements GeoJsonGeometry {
 }
 
 /** The properties associated with a feature. */
-class GeoJsonProperties {
+class GeoJsonProperties extends SchemaAnyObject {
 
   /** Create new GeoJsonProperties from JSON data */
   GeoJsonProperties.fromJson(core.Map json) {
+    innerMap.addAll(json);
   }
 
   /** Create JSON Object for GeoJsonProperties */
   core.Map toJson() {
-    var output = new core.Map();
-
-
-    return output;
+    return innerMap;
   }
 
   /** Return String representation of GeoJsonProperties */

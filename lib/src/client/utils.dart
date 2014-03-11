@@ -23,3 +23,22 @@ class SchemaArray<E> extends dart_collection.ListBase<E> {
   void addAll(core.Iterable<E> all) => innerList.addAll(all);
 }
 
+
+class SchemaAnyObject implements core.Map {
+  core.Map innerMap = new core.Map();
+  void clear() => innerMap.clear();
+  core.bool containsKey(core.Object key) => innerMap.containsKey(key);
+  core.bool containsValue(core.Object value) => innerMap.containsValue(value);
+  void forEach(void f(key, value)) => innerMap.forEach(f);
+  core.bool get isEmpty => innerMap.isEmpty;
+  core.bool get isNotEmpty => innerMap.isNotEmpty;
+  core.Iterable get keys => innerMap.keys;
+  core.int get length => innerMap.length;
+  putIfAbsent(key, ifAbsent()) => innerMap.putIfAbsent(key, ifAbsent);
+  remove(core.Object key) => innerMap.remove(key);
+  core.Iterable get values => innerMap.values;
+  void addAll(core.Map other) => innerMap.addAll(other);
+  operator [](core.Object key) => innerMap[key];
+  void operator []=(key, value) => innerMap[key] = value;
+}
+
