@@ -39,6 +39,8 @@ class SchemaAnyObject implements core.Map {
   core.Iterable get values => innerMap.values;
   void addAll(core.Map other) => innerMap.addAll(other);
   operator [](core.Object key) => innerMap[key];
-  void operator []=(key, value) => innerMap[key] = value;
+  void operator []=(key, value) { 
+    innerMap[key] = value;
+  }
 }
 
